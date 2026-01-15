@@ -1,26 +1,28 @@
 # BT Bot Dependencies
 
 # Web Framework
-fastapi>=0.104.0
-uvicorn[standard]>=0.24.0
-python-multipart>=0.0.6
+fastapi
+uvicorn[standard]
+python-multipart
 
 # Database
-supabase>=2.0.0
+supabase
 
 # AI Services
-openai>=1.3.0
+openai
+tiktoken
+anthropic
 
 # Email Parsing
-beautifulsoup4>=4.12.0
-html2text>=2024.2.26
-lxml>=4.9.0
+beautifulsoup4
+html2text
+lxml
 
 # Utilities
-python-dotenv>=1.0.0
-pydantic>=2.5.0
-pydantic-settings>=2.1.0
+python-dotenv
+pydantic
+pydantic-settings
 
 # Development
-pytest>=7.4.0
-httpx>=0.25.0
+pytest
+httpx
