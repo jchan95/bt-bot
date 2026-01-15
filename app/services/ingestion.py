@@ -225,9 +225,62 @@ class IngestionService:
             results=results,
         )
     
+    def _is_non_article_email(self, subject: str) -> Optional[str]:
+        """
+        Check if an email is a non-article (login code, receipt, etc).
+        Returns skip reason if should be skipped, None otherwise.
+        """
+        subject_lower = subject.lower()
+
+        # Login/authentication emails
+        if any(phrase in subject_lower for phrase in [
+            'login code',
+            'sign in',
+            'signin',
+            'verification code',
+            'verify your',
+            'confirm your',
+            'reset your password',
+            'password reset',
+        ]):
+            return "Login/authentication email"
+
+        # Payment/receipt emails
+        if any(phrase in subject_lower for phrase in [
+            'receipt',
+            'invoice',
+            'payment',
+            'subscription',
+            'billing',
+            'renewal',
+            'your order',
+            'thank you for your purchase',
+        ]):
+            return "Payment/receipt email"
+
+        # Welcome/account emails
+        if any(phrase in subject_lower for phrase in [
+            'welcome to stratechery',
+            'account created',
+            'registration complete',
+        ]):
+            return "Account/welcome email"
+
+        return None
+
     def _process_parsed_email(self, parsed: ParsedEmail) -> IngestionResult:
         """Process a parsed email and store in database."""
-        
+
+        # Filter out non-article emails (login codes, receipts, etc.)
+        skip_reason = self._is_non_article_email(parsed.subject)
+        if skip_reason:
+            return IngestionResult(
+                success=False,
+                skipped=True,
+                skip_reason=skip_reason,
+                title=parsed.subject,
+            )
+
         # Check for duplicates first
         if self._is_duplicate(parsed.content_hash):
             return IngestionResult(

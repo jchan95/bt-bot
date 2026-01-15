@@ -22,6 +22,7 @@ lxml
 python-dotenv
 pydantic
 pydantic-settings
+numpy
 
 # Development
 pytest
