@@ -357,21 +357,35 @@ Provide a structured analysis based on the context above."""
             question, limit=limit, threshold=threshold
         )
 
-        # Build sources context for citation step
+        # Fetch article metadata FIRST so we can include it in citation prompt
+        issue_ids = []
+        issue_ids.extend([d.get("issue_id") for d in distillations if d.get("issue_id")])
+        issue_ids.extend([c.get("issue_id") for c in chunks if c.get("issue_id")])
+        metadata = self._get_article_metadata(list(set(issue_ids)))
+
+        # Build sources context for citation step (with proper titles/dates)
         source_parts = []
         for i, d in enumerate(distillations, 1):
+            issue_id = d.get("issue_id")
+            meta = metadata.get(issue_id, {})
+            title = meta.get("title", "Unknown")
+            date = str(meta.get("publication_date", ""))[:10]
             source_parts.append(f"""
 Source {i} (Distillation):
-Title: {d.get('title', 'Unknown')}
-Date: {str(d.get('publication_date', ''))[:10]}
+Title: {title}
+Date: {date}
 Thesis: {d.get('thesis_statement', 'N/A')}
-Key Arguments: {', '.join(d.get('key_arguments', [])[:3]) if d.get('key_arguments') else 'N/A'}
+Key Claims: {', '.join(d.get('key_claims', [])[:3]) if d.get('key_claims') else 'N/A'}
 """)
 
         for i, c in enumerate(chunks, len(distillations) + 1):
+            issue_id = c.get("issue_id")
+            meta = metadata.get(issue_id, {})
+            title = meta.get("title", "Unknown")
+            date = str(meta.get("publication_date", ""))[:10]
             content = c.get('content', '')[:500]
             source_parts.append(f"""
-Source {i} (Excerpt):
+Source {i} (Excerpt from "{title}", {date}):
 Content: {content}
 """)
 
@@ -402,12 +416,7 @@ Content: {content}
         # Add copyright notice
         final_answer = self._add_copyright_notice(final_answer)
 
-        # Build sources list
-        issue_ids = []
-        issue_ids.extend([d.get("issue_id") for d in distillations if d.get("issue_id")])
-        issue_ids.extend([c.get("issue_id") for c in chunks if c.get("issue_id")])
-        metadata = self._get_article_metadata(list(set(issue_ids)))
-
+        # Build sources list (metadata already fetched above)
         sources = []
         seen_issues = set()
 
