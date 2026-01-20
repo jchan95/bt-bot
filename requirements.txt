@@ -7,7 +7,7 @@ python-multipart==0.0.6
 
 # Database - pinned to older version for httpx compatibility
 supabase==2.0.0
-httpx==0.25.2
+httpx==0.24.1
 
 # AI Services
 openai==1.12.0
