@@ -1,0 +1,51 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Local data files
+data/
+BT selected articles/
+new_articles/
+
+# Environment files
+.env
+.env.local
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Test files
+tests/
+test_*.py
+pytest.ini
+.pytest_cache/
+
+# Documentation
+README.md
+
+# Other deployment configs
+Dockerfile
+Procfile
+railway.toml
+render.yaml
+
+# Migrations (if not needed in serverless)
+migrations/
